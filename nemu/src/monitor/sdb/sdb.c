@@ -98,6 +98,17 @@ static int cmd_x(char *args) {
     return -1;
 }
 
+static int cmd_p(char *args) {
+    bool   success;
+    word_t res = expr(args, &success);
+    if (!success) {
+        Assert(true, "error");
+    } else {
+        printf("%d\n", res);
+    }
+    return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -111,6 +122,7 @@ static struct {
     {"si",   "Step by step",                                     cmd_si  },
     {"info", "Display program status information",               cmd_info},
     {"x",    "Display memory information",                       cmd_x   },
+    {"p",    "Evaluate expression",                              cmd_p   },
 };
 
 #define NR_CMD ARRLEN(cmd_table)
