@@ -52,6 +52,50 @@ static int cmd_q(char *args) {
     return -1;
 }
 
+static int cmd_si(char *args) {
+    if (args == NULL) {
+        cpu_exec(1);
+    }
+
+    char  *endptr;
+    word_t n = (word_t)strtol(args, &endptr, 10);
+
+    if (*endptr == '\0') {
+        cpu_exec(n);
+    }
+    return -1;
+}
+
+static int cmd_info(char *args) {
+    if (*args == 'r') {
+        isa_reg_display();
+        return 0;
+    } else if (*args == 'w') {
+        // info_watchpoints();
+        return 0;
+    }
+    return -1;
+}
+
+static int cmd_x(char *args) {
+    int    bytes;
+    word_t start;
+    int    result = sscanf(args, "%d %x", &bytes, &start);
+    if (result == 2) {
+        for (word_t offset = 0; offset < bytes; ++offset) {
+            word_t address = start + offset * 4;
+            printf(FMT_WORD " ", address);
+            for (word_t byte = 0; byte < 4; ++byte) {
+                uint8_t *value = guest_to_host(address + byte);
+                printf("%02x ", *value);
+            }
+            printf("\n");
+        }
+        return 1;
+    }
+    return -1;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -62,8 +106,9 @@ static struct {
     {"help", "Display information about all supported commands", cmd_help},
     {"c",    "Continue the execution of the program",            cmd_c   },
     {"q",    "Exit NEMU",                                        cmd_q   },
-
- /* TODO: Add more commands */
+    {"si",   "Step by step",                                     cmd_si  },
+    {"info", "Display program status information",               cmd_info},
+    {"x",    "Display memory information",                       cmd_x   },
 };
 
 #define NR_CMD ARRLEN(cmd_table)
