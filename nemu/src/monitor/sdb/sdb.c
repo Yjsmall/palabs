@@ -197,9 +197,80 @@ void sdb_mainloop() {
     }
 }
 
+void test_expr() {
+    char *nemu_pth = getenv("NEMU_HOME");
+    if (nemu_pth == NULL) {
+        perror("NEMU_HOME environment variable not set");
+        return;
+    }
+
+    char filepath[256];
+    snprintf(filepath, sizeof(filepath), "%s/tools/gen-expr/input", nemu_pth);
+
+    FILE *fp = fopen(filepath, "r");
+    if (fp == NULL) {
+        perror("test_expr error");
+
+        // 执行 make gen-expr
+        char make_command[256];
+        snprintf(make_command, sizeof(make_command), "cd %s/tools/gen-expr && make gen-expr", nemu_pth);
+        int make_result = system(make_command);
+        if (make_result != 0) {
+            perror("make gen-expr failed");
+            return;
+        }
+
+        // 执行 ./gen-expr 1000 > input
+        char gen_expr_command[256];
+        snprintf(gen_expr_command, sizeof(gen_expr_command), "cd %s/tools/gen-expr && ./gen-expr 1000 > input", nemu_pth);
+        int gen_expr_result = system(gen_expr_command);
+        if (gen_expr_result != 0) {
+            perror("./gen-expr failed");
+            return;
+        }
+
+        // 重新尝试打开文件
+        fp = fopen(filepath, "r");
+        if (fp == NULL) {
+            perror("Failed to open input file after generating it");
+            return;
+        }
+    }
+
+    char   *e = NULL;
+    word_t  correct_res;
+    size_t  len = 0;
+    ssize_t read;
+    bool    success   = false;
+    word_t  which_one = 0;
+
+    while (true) {
+        which_one++;
+        if (fscanf(fp, "%u ", &correct_res) == -1) break;
+        read        = getline(&e, &len, fp);
+        e[read - 1] = '\0';
+
+        word_t res = expr(e, &success);
+
+        assert(success);
+        if (res != correct_res) {
+            puts(e);
+            printf("The %u expected: %u, got: %u\n", which_one, correct_res, res);
+            assert(0);
+        }
+    }
+
+    fclose(fp);
+    if (e) free(e);
+
+    Log("expr test pass");
+}
+
 void init_sdb() {
     /* Compile the regular expressions. */
     init_regex();
+
+    test_expr();
 
     /* Initialize the watchpoint pool. */
     init_wp_pool();
