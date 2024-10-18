@@ -273,8 +273,8 @@ word_t eval(int p, int q, bool *ok) {
             return strtol(tokens[p].str, NULL, 16);
         } else if (tokens[p].type == TK_REG) {
             // 查找寄存器的值
-            printf("reg is %s", tokens[p].str);
-            return isa_reg_str2val(tokens[p].str, ok);
+            printf("reg is %s\n", tokens[p].str+1);
+            return isa_reg_str2val(tokens[p].str+1, ok);
         }
         *ok = false;
         return 0;
