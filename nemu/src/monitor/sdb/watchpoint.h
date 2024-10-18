@@ -18,7 +18,6 @@ typedef struct watchpoint {
     sword_t old_value;
 } WP;
 
-
 void init_wp_pool();
 
 WP *new_wp();
