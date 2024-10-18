@@ -23,6 +23,7 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include <stdio.h>
 
 enum {
     TK_NOTYPE = 256,
@@ -141,8 +142,8 @@ static bool make_token(char *e) {
                 char *substr_start = e + position;
                 int   substr_len   = pmatch.rm_eo;
 
-                // Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
-                //     i, rules[i].regex, position, substr_len, substr_len, substr_start);
+                Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
+                    i, rules[i].regex, position, substr_len, substr_len, substr_start);
 
                 position += substr_len;
 
@@ -272,6 +273,7 @@ word_t eval(int p, int q, bool *ok) {
             return strtol(tokens[p].str, NULL, 16);
         } else if (tokens[p].type == TK_REG) {
             // 查找寄存器的值
+            printf("reg is %s", tokens[p].str);
             return isa_reg_str2val(tokens[p].str, ok);
         }
         *ok = false;
