@@ -23,8 +23,19 @@ const char *regs[] = {
     "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"};
 
 void isa_reg_display() {
+    for (size_t i = 0; i < ARRLEN(regs); ++i) {
+        printf("%s\t" FMT_WORD "\n", reg_name(i), cpu.gpr[i]);
+    }
 }
 
 word_t isa_reg_str2val(const char *s, bool *success) {
-    return 0;
+    for (size_t i = 0; i < ARRLEN(regs); ++i) {
+        if (strcmp(regs[i], s) == 0) {
+            *success = true;
+            return cpu.gpr[i];
+        }
+    }
+
+    *success = false;
+    return -1;
 }
