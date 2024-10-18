@@ -273,7 +273,7 @@ word_t eval(int p, int q, bool *ok) {
             return strtol(tokens[p].str, NULL, 16);
         } else if (tokens[p].type == TK_REG) {
             // 查找寄存器的值
-            return isa_reg_str2val(tokens[p].str+1, ok);
+            return isa_reg_str2val(tokens[p].str + 1, ok);
         }
         *ok = false;
         return 0;

@@ -20,6 +20,7 @@
 #include "sdb.h"
 #include "common.h"
 #include "memory/paddr.h"
+#include "watchpoint.h"
 
 static int is_batch_mode = false;
 
@@ -73,7 +74,7 @@ static int cmd_info(char *args) {
         isa_reg_display();
         return 0;
     } else if (*args == 'w') {
-        // info_watchpoints();
+        info_watchpoints();
         return 0;
     }
     return -1;
@@ -109,6 +110,27 @@ static int cmd_p(char *args) {
     return 0;
 }
 
+static int cmd_w(char *args) {
+    WP *wp = new_wp();
+    strcpy(wp->expr, args);
+    bool success  = false;
+    wp->old_value = expr(wp->expr, &success);
+    if (!success) {
+        printf("The expr of watch is error\n");
+        return -1;
+    }
+    return 0;
+}
+
+static int cmd_d(char *args) {
+    if (args == NULL) {
+        printf("No args. \n");
+    } else {
+        delete_watchpoint(atoi(args));
+    }
+    return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -123,6 +145,8 @@ static struct {
     {"info", "Display program status information",               cmd_info},
     {"x",    "Display memory information",                       cmd_x   },
     {"p",    "Evaluate expression",                              cmd_p   },
+    {"w",    "Set a watchpoint",                                 cmd_w   },
+    {"d",    "Delete a watchpoint",                              cmd_d   },
 };
 
 #define NR_CMD ARRLEN(cmd_table)

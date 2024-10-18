@@ -13,20 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include "sdb.h"
-
-#define NR_WP 32
-
-typedef struct watchpoint {
-    int                NO;
-    struct watchpoint *next;
-
-    /* TODO: Add more members if necessary */
-
-} WP;
-
-static WP  wp_pool[NR_WP] = {};
-static WP *head = NULL, *free_ = NULL;
+#include "watchpoint.h"
 
 void init_wp_pool() {
     int i;
@@ -39,4 +26,80 @@ void init_wp_pool() {
     free_ = wp_pool;
 }
 
-/* TODO: Implement the functionality of watchpoint */
+WP *new_wp() {
+    for (WP *p = free_; p->next != NULL; p = p->next) {
+        if (p->used == false) {
+            p->used = true;
+            if (head == NULL) {
+                head = p;
+            }
+            return p;
+        }
+    }
+    printf("No enough watchpoints.\n");
+    assert(0);
+    return NULL;
+}
+
+void free_wp(WP *wp) {
+    if (head->NO == wp->NO) {
+        head->used = false;
+        head       = NULL;
+        printf("Delete watchpoint  success.\n");
+        return;
+    }
+
+    for (WP *p = head; p->next != NULL; p = p->next) {
+        //	printf("wp -> no = %d , head -> no = %d, p -> no = %d.\n", wp -> NO, p-> NO, head -> NO);
+        if (p->next->NO == wp->NO) {
+            p->next       = p->next->next;
+            p->next->used = false; // 没有被使用
+            printf("free succes.\n");
+            return;
+        }
+    }
+}
+
+void check_watchpoints() {
+    for (int i = 0; i < NR_WP; i++) {
+        if (wp_pool[i].used) {
+            bool   success   = false;
+            word_t new_value = expr(wp_pool[i].expr, &success);
+
+            if (!success) {
+                printf("The expr of watchpoint %d is error\n", i);
+                return;
+            }
+
+            if (new_value != wp_pool[i].old_value) {
+                nemu_state.state = NEMU_STOP;
+                printf("Watchpoint %d: %s\n", i, wp_pool[i].expr);
+                printf("Old value = %u\n", wp_pool[i].old_value);
+                printf("New value = %u\n", new_value);
+                wp_pool[i].old_value = new_value;
+            }
+        }
+    }
+}
+
+void info_watchpoints() {
+    WP *wp = head;
+    if (!wp) {
+        printf("No watchpoints.\n");
+        return;
+    }
+    for (int i = 0; i < NR_WP; i++) {
+        if (wp_pool[i].used) {
+            printf("Watchpoint %d: %s, value = %u\n", i, wp_pool[i].expr, wp_pool[i].old_value);
+        }
+    }
+}
+
+void delete_watchpoint(int no) {
+    for (int i = 0; i < NR_WP; i++) {
+        if (wp_pool[i].NO == no) {
+            free_wp(&wp_pool[i]);
+            return;
+        }
+    }
+}
