@@ -20,7 +20,6 @@
 #include <stdio.h>
 
 static inline int check_reg_idx(int idx) {
-    printf("%d\n", idx);
     IFDEF(CONFIG_RT_CHECK, assert(idx >= 0 && idx < MUXDEF(CONFIG_RVE, 16, 32)));
     return idx;
 }
