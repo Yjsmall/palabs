@@ -968,7 +968,7 @@ static void welcome() {
                "Build time: %s, %s"
                "\33[0m"
                "\n",
-               "src/monitor/monitor.c", 32, __func__, "12:11:28", "Oct 19 2024");
+               "src/monitor/monitor.c", 32, __func__, "12:12:33", "Oct 19 2024");
         do {
             extern FILE *log_fp;
             extern _Bool
@@ -980,7 +980,7 @@ static void welcome() {
                                 "Build time: %s, %s"
                                 "\33[0m"
                                 "\n",
-                        "src/monitor/monitor.c", 32, __func__, "12:11:28", "Oct 19 2024");
+                        "src/monitor/monitor.c", 32, __func__, "12:12:33", "Oct 19 2024");
                 fflush(log_fp);
             }
         } while (0);
