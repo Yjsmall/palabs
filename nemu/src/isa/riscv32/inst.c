@@ -102,7 +102,7 @@ static int decode_exec(Decode *s) {
     // TYPE_U: U-type instruction
     INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc, U, printf("imm is %08x\n", imm);
     printf("before%08x\n", R(2));
-    R(rd) = s->pc + (imm << 12);
+    R(rd) = s->pc + imm;
     printf("after%08x\n", R(2));
     );
     // TYPE_S: S-type instruction
