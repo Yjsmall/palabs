@@ -17,7 +17,6 @@
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
 #include <cpu/decode.h>
-#include <stdio.h>
 
 #define R(i) gpr(i)
 #define Mr   vaddr_read
@@ -95,8 +94,7 @@ static int decode_exec(Decode *s) {
     // INSPAT(str, name, type, operantion)
 
     // TYPE_J: J-type instruction
-    INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal, J, printf("imm is %08x\n", imm); R(rd) = s->pc + 4; s->dnpc = s->pc + imm;
-            printf("s->dnpc is %08x\n", s->dnpc););
+    INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal, J, R(rd) = s->pc + 4; s->dnpc = s->pc + imm;);
 
     // TYPE_I: I-type instruction
     // ----------[imme]---------[rs1]-[3]-[rd]-[opcode]
