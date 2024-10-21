@@ -17,6 +17,7 @@
 #define __MEMORY_PADDR_H__
 
 #include <common.h>
+#include <stdio.h>
 
 #define PMEM_LEFT    ((paddr_t)CONFIG_MBASE)
 #define PMEM_RIGHT   ((paddr_t)CONFIG_MBASE + CONFIG_MSIZE - 1)
@@ -28,6 +29,7 @@ uint8_t *guest_to_host(paddr_t paddr);
 paddr_t host_to_guest(uint8_t *haddr);
 
 static inline bool in_pmem(paddr_t addr) {
+    printf("addr is %d\n", addr);
     return (addr - CONFIG_MBASE) < CONFIG_MSIZE;
 }
 
