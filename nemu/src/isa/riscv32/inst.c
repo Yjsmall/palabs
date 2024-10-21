@@ -28,6 +28,7 @@ enum {
     TYPE_S,
     TYPE_J,
     TYPE_R,
+    TYPE_B,
     TYPE_N, // none
 };
 
@@ -57,6 +58,10 @@ enum {
         *imm = SEXT((BITS(i, 31, 31) << 19) | (BITS(i, 30, 21)) | (BITS(i, 20, 20) << 10) | (BITS(i, 19, 12) << 11), 20) << 1;                       \
     } while (0)
 
+#define immB()\
+    do {\
+        *imm = SEXT((BITS(i, 31, 31) << 12) | (BITS(i, 30, 25) << 5) | (BITS(i, 11, 8) << 1) | (BITS(i, 7, 7) << 11), 13) << 1;\
+    } while(0)
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
     uint32_t i   = s->isa.inst;
@@ -76,6 +81,7 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
             break;
         case TYPE_J: immJ(); break;
         case TYPE_R: src1R(); src2R(); break;
+        case TYPE_B: src1R(); src2R(); break;
         case TYPE_N: break;
         default: panic("unsupported type = %d", type);
     }
@@ -118,6 +124,10 @@ static int decode_exec(Decode *s) {
     // TYPE_R: R-type instruction
     INSTPAT("0000000 ????? ????? 000 ????? 011 0011", add, R, R(rd) = src1 + src2;);
     INSTPAT("0100000 ????? ????? 000 ????? 011 0011", sub, R, R(rd) = src1 - src2;);
+
+    // TYPE_B: B-type instruction
+    //                    rs2   rs1             opcode
+    INSTPAT("??????? 00000 ????? 001 ????? 11000 11", beqz, B, s->dnpc = (src1 == 0) ? s->dnpc + imm : s->pc + 4;);
 
     // TYPE_N: No operand instruction
     INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak, N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
