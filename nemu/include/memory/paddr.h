@@ -29,8 +29,13 @@ uint8_t *guest_to_host(paddr_t paddr);
 paddr_t host_to_guest(uint8_t *haddr);
 
 static inline bool in_pmem(paddr_t addr) {
+    if (addr - CONFIG_MBASE < CONFIG_MSIZE) {
+        return 1;
+    } else {
+
     printf("addr is %d\n", addr);
-    return (addr - CONFIG_MBASE) < CONFIG_MSIZE;
+        return 0;
+    }
 }
 
 word_t paddr_read(paddr_t addr, int len);
