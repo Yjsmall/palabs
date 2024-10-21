@@ -107,6 +107,7 @@ static int decode_exec(Decode *s) {
     INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw, S, printf("src1 is %d\n", src1); 
     printf("imm is %d\n", imm);
     printf("rd is %d\n" ,rd);
+    printf("src2 is %d\n", src2);
     Mw(R(src1) + imm, 4, src2));
 
     // TYPE_J: J-type instruction
