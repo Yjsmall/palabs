@@ -33,7 +33,7 @@ static inline bool in_pmem(paddr_t addr) {
         return 1;
     } else {
 
-    printf("addr is %d\n", addr);
+    printf("addr is %u\n", addr);
         return 0;
     }
 }
