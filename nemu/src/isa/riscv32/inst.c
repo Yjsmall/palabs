@@ -109,7 +109,7 @@ static int decode_exec(Decode *s) {
     printf("imm is %d\n", imm);
     printf("rd is %d\n" ,rd);
     printf("src2 is %d\n", src2);
-    Mw(src1 + imm, 4, src2));
+    Mw(src1 + imm, 2, src2));
 
     // TYPE_J: J-type instruction
     INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal, J, R(rd) = s->pc + 4; s->dnpc = s->pc + imm);
