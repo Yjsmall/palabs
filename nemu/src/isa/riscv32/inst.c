@@ -31,30 +31,30 @@ enum {
     TYPE_J
 };
 
-#define src1R()         \
-    do {                \
-        *src1 = R(rs1); \
+#define src1R()                                                                                                                                      \
+    do {                                                                                                                                             \
+        *src1 = R(rs1);                                                                                                                              \
     } while (0)
-#define src2R()         \
-    do {                \
-        *src2 = R(rs2); \
+#define src2R()                                                                                                                                      \
+    do {                                                                                                                                             \
+        *src2 = R(rs2);                                                                                                                              \
     } while (0)
-#define immI()                            \
-    do {                                  \
-        *imm = SEXT(BITS(i, 31, 20), 12); \
+#define immI()                                                                                                                                       \
+    do {                                                                                                                                             \
+        *imm = SEXT(BITS(i, 31, 20), 12);                                                                                                            \
     } while (0)
-#define immU()                                  \
-    do {                                        \
-        *imm = SEXT(BITS(i, 31, 12), 20) << 12; \
+#define immU()                                                                                                                                       \
+    do {                                                                                                                                             \
+        *imm = SEXT(BITS(i, 31, 12), 20) << 12;                                                                                                      \
     } while (0)
-#define immS()                                                   \
-    do {                                                         \
-        *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7); \
+#define immS()                                                                                                                                       \
+    do {                                                                                                                                             \
+        *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7);                                                                                     \
     } while (0)
 
-#define immJ()                                                                                                                 \
-    do {                                                                                                                       \
-        *imm = SEXT((BITS(i, 31, 31) << 19) | (BITS(i, 30, 21)) | (BITS(i, 20, 20) << 10) | (BITS(i, 19, 12) << 11), 20) << 1; \
+#define immJ()                                                                                                                                       \
+    do {                                                                                                                                             \
+        *imm = SEXT((BITS(i, 31, 31) << 19) | (BITS(i, 30, 21)) | (BITS(i, 20, 20) << 10) | (BITS(i, 19, 12) << 11), 20) << 1;                       \
     } while (0)
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
@@ -75,7 +75,7 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
             break;
         case TYPE_J: immJ(); break;
         case TYPE_N: break;
-        default: panic("unsupported type = %d", type);
+        default:     panic("unsupported type = %d", type);
     }
 }
 
@@ -83,19 +83,20 @@ static int decode_exec(Decode *s) {
     s->dnpc = s->snpc;
 
 #define INSTPAT_INST(s) ((s)->isa.inst)
-#define INSTPAT_MATCH(s, name, type, ... /* execute body */)             \
-    {                                                                    \
-        int    rd   = 0;                                                 \
-        word_t src1 = 0, src2 = 0, imm = 0;                              \
-        decode_operand(s, &rd, &src1, &src2, &imm, concat(TYPE_, type)); \
-        __VA_ARGS__;                                                     \
+#define INSTPAT_MATCH(s, name, type, ... /* execute body */)                                                                                         \
+    {                                                                                                                                                \
+        int    rd   = 0;                                                                                                                             \
+        word_t src1 = 0, src2 = 0, imm = 0;                                                                                                          \
+        decode_operand(s, &rd, &src1, &src2, &imm, concat(TYPE_, type));                                                                             \
+        __VA_ARGS__;                                                                                                                                 \
     }
 
     INSTPAT_START();
     // INSPAT(str, name, type, operantion)
 
     // TYPE_J: J-type instruction
-    INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal, J, printf("imm is %08x\n", imm);R(rd) = s->pc + 4; s->dnpc = s->pc + imm; printf("s->dnpc is %08x\n", s->dnpc););
+    INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal, J, printf("imm is %08x\n", imm); R(rd) = s->pc + 4; s->dnpc = s->pc + imm;
+            printf("s->dnpc is %08x\n", s->dnpc););
 
     // TYPE_I: I-type instruction
     // ----------[imme]---------[rs1]-[3]-[rd]-[opcode]
@@ -103,16 +104,13 @@ static int decode_exec(Decode *s) {
     INSTPAT("??????? ????? 00000 000 ????? 0010011", li, I, R(rd) = imm;);
     INSTPAT("??????? ????? ????? 000 ????? 0010011", addi, I, R(rd) = src1 + imm;);
     INSTPAT("0000000 00000 00001 000 00000 1100111", ret, I, s->dnpc = src1 + imm);
-    INSTPAT("??????? ????? ????? 000 ????? 1100111",jalr, I, s->dnpc = src1 + imm; R(rd) = s->pc + 4;);
-
+    INSTPAT("??????? ????? ????? 000 ????? 1100111", jalr, I, s->dnpc = src1 + imm; R(rd) = s->pc + 4;);
 
     // TYPE_U: U-type instruction
     INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc, U, R(rd) = s->pc + imm;);
     // TYPE_S: S-type instruction
     INSTPAT("??????? ????? ????? 000 ????? 01000 11", sb, S, Mw(src1 + imm, 1, src2));
     INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw, S, Mw(src1 + imm, 4, src2));
-
-
 
     // TYPE_N: No operand instruction
     INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak, N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
