@@ -66,14 +66,15 @@ static bool      read_ext_csd = false;
 static void prepare_rw(int is_write) {
     blk_addr = base[SDARG];
     addr     = 0;
-    if (fp) fseek(fp, blk_addr << 9, SEEK_SET);
+    if (fp)
+        fseek(fp, blk_addr << 9, SEEK_SET);
     write_cmd = is_write;
 }
 
 static void sdcard_handle_cmd(int cmd) {
     switch (cmd) {
         case MMC_GO_IDLE_STATE: break;
-        case MMC_SEND_OP_COND: base[SDRSP0] = 0x80ff8000; break;
+        case MMC_SEND_OP_COND:  base[SDRSP0] = 0x80ff8000; break;
         case MMC_ALL_SEND_CID:
             base[SDRSP0] = 0x00000001;
             base[SDRSP1] = 0x00000000;
@@ -92,33 +93,31 @@ static void sdcard_handle_cmd(int cmd) {
             read_ext_csd = true;
             addr         = 0;
             break;
-        case MMC_SLEEP_AWAKE: break;
-        case MMC_APP_CMD: break;
-        case MMC_SET_RELATIVE_ADDR: break;
-        case MMC_SELECT_CARD: break;
-        case MMC_SET_BLOCK_COUNT: blkcnt = base[SDARG] & 0xffff; break;
-        case MMC_READ_MULTIPLE_BLOCK: prepare_rw(false); break;
+        case MMC_SLEEP_AWAKE:          break;
+        case MMC_APP_CMD:              break;
+        case MMC_SET_RELATIVE_ADDR:    break;
+        case MMC_SELECT_CARD:          break;
+        case MMC_SET_BLOCK_COUNT:      blkcnt = base[SDARG] & 0xffff; break;
+        case MMC_READ_MULTIPLE_BLOCK:  prepare_rw(false); break;
         case MMC_WRITE_MULTIPLE_BLOCK: prepare_rw(true); break;
         case MMC_SEND_STATUS:
             base[SDRSP0] = 0x900;
             base[SDRSP1] = base[SDRSP2] = base[SDRSP3] = 0;
             break;
         case MMC_STOP_TRANSMISSION: break;
-        default:
-            panic("unhandled command = %d", cmd);
+        default:                    panic("unhandled command = %d", cmd);
     }
 }
 
 static void sdcard_io_handler(uint32_t offset, int len, bool is_write) {
     int idx = offset / 4;
     switch (idx) {
-        case SDCMD: sdcard_handle_cmd(base[SDCMD] & 0x3f); break;
+        case SDCMD:  sdcard_handle_cmd(base[SDCMD] & 0x3f); break;
         case SDARG:
         case SDRSP0:
         case SDRSP1:
         case SDRSP2:
-        case SDRSP3:
-            break;
+        case SDRSP3: break;
         case SDDATA:
             if (read_ext_csd) {
                 // See section 8.1 JEDEC Standard JED84-A441
@@ -126,10 +125,11 @@ static void sdcard_io_handler(uint32_t offset, int len, bool is_write) {
                 switch (addr) {
                     case 192: data = 2; break; // EXT_CSD_REV
                     case 212: data = MEMORY_SIZE / 512; break;
-                    default: data = 0;
+                    default:  data = 0;
                 }
                 base[SDDATA] = data;
-                if (addr == 512 - 4) read_ext_csd = false;
+                if (addr == 512 - 4)
+                    read_ext_csd = false;
             } else if (fp) {
                 __attribute__((unused)) int ret;
                 if (!write_cmd) {
@@ -140,9 +140,7 @@ static void sdcard_io_handler(uint32_t offset, int len, bool is_write) {
             }
             addr += 4;
             break;
-        default:
-            Log("offset = 0x%x(idx = %d), is_write = %d, data = 0x%x", offset, idx, is_write, base[idx]);
-            panic("unhandle offset = %d", offset);
+        default: Log("offset = 0x%x(idx = %d), is_write = %d, data = 0x%x", offset, idx, is_write, base[idx]); panic("unhandle offset = %d", offset);
     }
 }
 
@@ -154,5 +152,6 @@ void init_sdcard() {
 
     const char *img = CONFIG_SDCARD_IMG_PATH;
     fp              = fopen(img, "r+");
-    if (fp == NULL) Log("Can not find sdcard image: %s", img);
+    if (fp == NULL)
+        Log("Can not find sdcard image: %s", img);
 }

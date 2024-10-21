@@ -88,8 +88,7 @@ static int    nr_token __attribute__((used)) = 0;
 
 static bool is_negative(int i) {
     // 如果在表达式的开头或者前一个 token 是操作符或者左括号，则认为是负号
-    if (i == 0 || tokens[i - 1].type == '+' || tokens[i - 1].type == '-' ||
-        tokens[i - 1].type == '*' || tokens[i - 1].type == '/' ||
+    if (i == 0 || tokens[i - 1].type == '+' || tokens[i - 1].type == '-' || tokens[i - 1].type == '*' || tokens[i - 1].type == '/' ||
         tokens[i - 1].type == '(') {
         return true;
     }
@@ -97,8 +96,7 @@ static bool is_negative(int i) {
 }
 
 static bool is_deference(int i) {
-    if (i == 0 || tokens[i - 1].type == '+' || tokens[i - 1].type == '-' ||
-        tokens[i - 1].type == '*' || tokens[i - 1].type == '/' ||
+    if (i == 0 || tokens[i - 1].type == '+' || tokens[i - 1].type == '-' || tokens[i - 1].type == '*' || tokens[i - 1].type == '/' ||
         tokens[i - 1].type == '(') {
         return true;
     }
@@ -234,15 +232,15 @@ int find_major(int p, int q) {
             int priority = 5; // 初始化为最高优先级
 
             switch (tokens[i].type) {
-                case TK_AND: priority = 0; break; // lowest precedence
-                case TK_EQ: priority = 1; break;  // equality check
+                case TK_AND:   priority = 0; break; // lowest precedence
+                case TK_EQ:    priority = 1; break; // equality check
                 case '+':
-                case '-': priority = 2; break; // addition and subtraction
+                case '-':      priority = 2; break; // addition and subtraction
                 case '*':
-                case '/': priority = 3; break; // multiplication and division
+                case '/':      priority = 3; break; // multiplication and division
                 case TK_NEG:
                 case TK_DEREF: priority = 4; break; // negation and dereference (highest precedence)
-                default: assert(0);
+                default:       assert(0);
             }
 
             // 找到优先级最低的操作符
@@ -296,9 +294,9 @@ word_t eval(int p, int q, bool *ok) {
 
             // 执行一元操作符对应的运算
             switch (tokens[major].type) {
-                case TK_NEG: return -val2;
+                case TK_NEG:   return -val2;
                 case TK_DEREF: return paddr_read(val2, 4); // 假设存在解引用函数
-                default: assert(0);
+                default:       assert(0);
             }
         }
 
@@ -325,9 +323,9 @@ word_t eval(int p, int q, bool *ok) {
                     return 0;
                 }
                 return (sword_t)val1 / (sword_t)val2; // e.g. -1/2, may not pass the expr test
-            case TK_EQ: return val1 == val2;
+            case TK_EQ:  return val1 == val2;
             case TK_AND: return val1 && val2;
-            default: assert(0);
+            default:     assert(0);
         }
     }
 }

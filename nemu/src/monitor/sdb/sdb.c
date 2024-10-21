@@ -173,9 +173,7 @@ static int cmd_help(char *args) {
     return 0;
 }
 
-void sdb_set_batch_mode() {
-    is_batch_mode = true;
-}
+void sdb_set_batch_mode() { is_batch_mode = true; }
 
 void sdb_mainloop() {
     if (is_batch_mode) {
@@ -270,7 +268,8 @@ void test_expr() {
 
     while (true) {
         which_one++;
-        if (fscanf(fp, "%u ", &correct_res) == -1) break;
+        if (fscanf(fp, "%u ", &correct_res) == -1)
+            break;
         read        = getline(&e, &len, fp);
         e[read - 1] = '\0';
 
@@ -285,7 +284,8 @@ void test_expr() {
     }
 
     fclose(fp);
-    if (e) free(e);
+    if (e)
+        free(e);
 
     Log("expr test pass");
 }

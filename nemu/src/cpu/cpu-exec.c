@@ -67,7 +67,8 @@ static void exec_once(Decode *s, vaddr_t pc) {
     }
     int ilen_max  = MUXDEF(CONFIG_ISA_x86, 8, 4);
     int space_len = ilen_max - ilen;
-    if (space_len < 0) space_len = 0;
+    if (space_len < 0)
+        space_len = 0;
     space_len = space_len * 3 + 1;
     memset(p, ' ', space_len);
     p += space_len;
@@ -85,7 +86,8 @@ static void execute(uint64_t n) {
         printf("-after: cpu.pc = %08x\n\n", cpu.pc);
         g_nr_guest_inst++;
         trace_and_difftest(&s, cpu.pc);
-        if (nemu_state.state != NEMU_RUNNING) break;
+        if (nemu_state.state != NEMU_RUNNING)
+            break;
         IFDEF(CONFIG_DEVICE, device_update());
     }
 }
@@ -112,10 +114,8 @@ void cpu_exec(uint64_t n) {
     switch (nemu_state.state) {
         case NEMU_END:
         case NEMU_ABORT:
-        case NEMU_QUIT:
-            printf("Program execution has ended. To restart the program, exit NEMU and run again.\n");
-            return;
-        default: nemu_state.state = NEMU_RUNNING;
+        case NEMU_QUIT:  printf("Program execution has ended. To restart the program, exit NEMU and run again.\n"); return;
+        default:         nemu_state.state = NEMU_RUNNING;
     }
 
     uint64_t timer_start = get_time();
@@ -131,7 +131,9 @@ void cpu_exec(uint64_t n) {
         case NEMU_END:
         case NEMU_ABORT:
             Log("nemu: %s at pc = " FMT_WORD,
-                (nemu_state.state == NEMU_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) : (nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
+                (nemu_state.state == NEMU_ABORT
+                     ? ANSI_FMT("ABORT", ANSI_FG_RED)
+                     : (nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
                 nemu_state.halt_pc);
             // fall through
         case NEMU_QUIT: statistic();

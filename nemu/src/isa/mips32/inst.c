@@ -28,21 +28,21 @@ enum {
     TYPE_N, // none
 };
 
-#define src1R()        \
-    do {               \
-        *src1 = R(rs); \
+#define src1R()                                                                                                                                      \
+    do {                                                                                                                                             \
+        *src1 = R(rs);                                                                                                                               \
     } while (0)
-#define src2R()        \
-    do {               \
-        *src2 = R(rt); \
+#define src2R()                                                                                                                                      \
+    do {                                                                                                                                             \
+        *src2 = R(rt);                                                                                                                               \
     } while (0)
-#define immI()                           \
-    do {                                 \
-        *imm = SEXT(BITS(i, 15, 0), 16); \
+#define immI()                                                                                                                                       \
+    do {                                                                                                                                             \
+        *imm = SEXT(BITS(i, 15, 0), 16);                                                                                                             \
     } while (0)
-#define immU()                 \
-    do {                       \
-        *imm = BITS(i, 15, 0); \
+#define immU()                                                                                                                                       \
+    do {                                                                                                                                             \
+        *imm = BITS(i, 15, 0);                                                                                                                       \
     } while (0)
 
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
@@ -60,7 +60,7 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
             immU();
             break;
         case TYPE_N: break;
-        default: panic("unsupported type = %d", type);
+        default:     panic("unsupported type = %d", type);
     }
 }
 
@@ -68,12 +68,12 @@ static int decode_exec(Decode *s) {
     s->dnpc = s->snpc;
 
 #define INSTPAT_INST(s) ((s)->isa.inst)
-#define INSTPAT_MATCH(s, name, type, ... /* execute body */)             \
-    {                                                                    \
-        int    rd   = 0;                                                 \
-        word_t src1 = 0, src2 = 0, imm = 0;                              \
-        decode_operand(s, &rd, &src1, &src2, &imm, concat(TYPE_, type)); \
-        __VA_ARGS__;                                                     \
+#define INSTPAT_MATCH(s, name, type, ... /* execute body */)                                                                                         \
+    {                                                                                                                                                \
+        int    rd   = 0;                                                                                                                             \
+        word_t src1 = 0, src2 = 0, imm = 0;                                                                                                          \
+        decode_operand(s, &rd, &src1, &src2, &imm, concat(TYPE_, type));                                                                             \
+        __VA_ARGS__;                                                                                                                                 \
     }
 
     INSTPAT_START();

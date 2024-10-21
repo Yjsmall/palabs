@@ -59,18 +59,18 @@ static word_t x86_inst_fetch(Decode *s, int len) {
 
 word_t reg_read(int idx, int width) {
     switch (width) {
-        case 4: return reg_l(idx);
-        case 1: return reg_b(idx);
-        case 2: return reg_w(idx);
+        case 4:  return reg_l(idx);
+        case 1:  return reg_b(idx);
+        case 2:  return reg_w(idx);
         default: assert(0);
     }
 }
 
 static void reg_write(int idx, int width, word_t data) {
     switch (width) {
-        case 4: reg_l(idx) = data; return;
-        case 1: reg_b(idx) = data; return;
-        case 2: reg_w(idx) = data; return;
+        case 4:  reg_l(idx) = data; return;
+        case 1:  reg_b(idx) = data; return;
+        case 2:  reg_w(idx) = data; return;
         default: assert(0);
     }
 }
@@ -113,15 +113,18 @@ static void load_addr(Decode *s, ModR_M *m, word_t *rm_addr) {
     }
 
     word_t addr = disp;
-    if (base_reg != -1) addr += reg_l(base_reg);
-    if (index_reg != -1) addr += reg_l(index_reg) << scale;
+    if (base_reg != -1)
+        addr += reg_l(base_reg);
+    if (index_reg != -1)
+        addr += reg_l(index_reg) << scale;
     *rm_addr = addr;
 }
 
 static void decode_rm(Decode *s, int *rm_reg, word_t *rm_addr, int *reg, int width) {
     ModR_M m;
     m.val = x86_inst_fetch(s, 1);
-    if (reg != NULL) *reg = m.reg;
+    if (reg != NULL)
+        *reg = m.reg;
     if (m.mod == 3)
         *rm_reg = m.R_M;
     else {
@@ -135,29 +138,29 @@ static void decode_rm(Decode *s, int *rm_reg, word_t *rm_addr, int *reg, int wid
 #define Mr          vaddr_read
 #define Mw          vaddr_write
 #define RMr(reg, w) (reg != -1 ? Rr(reg, w) : Mr(addr, w))
-#define RMw(data)              \
-    do {                       \
-        if (rd != -1)          \
-            Rw(rd, w, data);   \
-        else                   \
-            Mw(addr, w, data); \
+#define RMw(data)                                                                                                                                    \
+    do {                                                                                                                                             \
+        if (rd != -1)                                                                                                                                \
+            Rw(rd, w, data);                                                                                                                         \
+        else                                                                                                                                         \
+            Mw(addr, w, data);                                                                                                                       \
     } while (0)
 
-#define destr(r)    \
-    do {            \
-        *rd_ = (r); \
+#define destr(r)                                                                                                                                     \
+    do {                                                                                                                                             \
+        *rd_ = (r);                                                                                                                                  \
     } while (0)
-#define src1r(r)          \
-    do {                  \
-        *src1 = Rr(r, w); \
+#define src1r(r)                                                                                                                                     \
+    do {                                                                                                                                             \
+        *src1 = Rr(r, w);                                                                                                                            \
     } while (0)
-#define imm()                        \
-    do {                             \
-        *imm = x86_inst_fetch(s, w); \
+#define imm()                                                                                                                                        \
+    do {                                                                                                                                             \
+        *imm = x86_inst_fetch(s, w);                                                                                                                 \
     } while (0)
-#define simm(w)                                   \
-    do {                                          \
-        *imm = SEXT(x86_inst_fetch(s, w), w * 8); \
+#define simm(w)                                                                                                                                      \
+    do {                                                                                                                                             \
+        *imm = SEXT(x86_inst_fetch(s, w), w * 8);                                                                                                    \
     } while (0)
 
 enum {
@@ -187,13 +190,13 @@ enum {
 };
 
 #define INSTPAT_INST(s) opcode
-#define INSTPAT_MATCH(s, name, type, width, ... /* execute body */)                               \
-    {                                                                                             \
-        int    rd = 0, rs = 0, gp_idx = 0;                                                        \
-        word_t src1 = 0, addr = 0, imm = 0;                                                       \
-        int    w = width == 0 ? (is_operand_size_16 ? 2 : 4) : width;                             \
-        decode_operand(s, opcode, &rd, &src1, &addr, &rs, &gp_idx, &imm, w, concat(TYPE_, type)); \
-        __VA_ARGS__;                                                                              \
+#define INSTPAT_MATCH(s, name, type, width, ... /* execute body */)                                                                                  \
+    {                                                                                                                                                \
+        int    rd = 0, rs = 0, gp_idx = 0;                                                                                                           \
+        word_t src1 = 0, addr = 0, imm = 0;                                                                                                          \
+        int    w = width == 0 ? (is_operand_size_16 ? 2 : 4) : width;                                                                                \
+        decode_operand(s, opcode, &rd, &src1, &addr, &rs, &gp_idx, &imm, w, concat(TYPE_, type));                                                    \
+        __VA_ARGS__;                                                                                                                                 \
     }
 
 static void decode_operand(Decode *s, uint8_t opcode, int *rd_, word_t *src1, word_t *addr, int *rs, int *gp_idx, word_t *imm, int w, int type) {
@@ -223,11 +226,11 @@ static void decode_operand(Decode *s, uint8_t opcode, int *rd_, word_t *src1, wo
     }
 }
 
-#define gp1()                    \
-    do {                         \
-        switch (gp_idx) {        \
-            default: INV(s->pc); \
-        };                       \
+#define gp1()                                                                                                                                        \
+    do {                                                                                                                                             \
+        switch (gp_idx) {                                                                                                                            \
+            default: INV(s->pc);                                                                                                                     \
+        };                                                                                                                                           \
     } while (0)
 
 void _2byte_esc(Decode *s, bool is_operand_size_16) {
