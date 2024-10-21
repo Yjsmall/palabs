@@ -75,7 +75,7 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
             break;
         case TYPE_J: immJ(); break;
         case TYPE_N: break;
-        default:     panic("unsupported type = %d", type);
+        default: panic("unsupported type = %d", type);
     }
 }
 

@@ -55,7 +55,7 @@ static void decode_operand(Decode *s, int *rd_, word_t *src1, word_t *src2, word
             src1R();
             break;
         case TYPE_N: break;
-        default:     panic("Unsupport type = %d", type);
+        default: panic("Unsupport type = %d", type);
     }
 }
 

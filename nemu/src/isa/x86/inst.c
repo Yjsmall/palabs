@@ -59,18 +59,18 @@ static word_t x86_inst_fetch(Decode *s, int len) {
 
 word_t reg_read(int idx, int width) {
     switch (width) {
-        case 4:  return reg_l(idx);
-        case 1:  return reg_b(idx);
-        case 2:  return reg_w(idx);
+        case 4: return reg_l(idx);
+        case 1: return reg_b(idx);
+        case 2: return reg_w(idx);
         default: assert(0);
     }
 }
 
 static void reg_write(int idx, int width, word_t data) {
     switch (width) {
-        case 4:  reg_l(idx) = data; return;
-        case 1:  reg_b(idx) = data; return;
-        case 2:  reg_w(idx) = data; return;
+        case 4: reg_l(idx) = data; return;
+        case 1: reg_b(idx) = data; return;
+        case 2: reg_w(idx) = data; return;
         default: assert(0);
     }
 }

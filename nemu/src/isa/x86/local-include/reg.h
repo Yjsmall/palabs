@@ -36,9 +36,9 @@ static inline const char *reg_name(int index, int width) {
     IFDEF(CONFIG_RT_CHECK, assert(index >= 0 && index < 8));
 
     switch (width) {
-        case 4:  return regsl[index];
-        case 1:  return regsb[index];
-        case 2:  return regsw[index];
+        case 4: return regsl[index];
+        case 1: return regsb[index];
+        case 2: return regsw[index];
         default: assert(0);
     }
 }
