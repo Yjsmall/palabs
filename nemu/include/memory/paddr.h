@@ -35,6 +35,7 @@ static inline bool in_pmem(paddr_t addr) {
 
     printf("addr is %08x\n", addr);
     printf("addr is %08x\n", addr - CONFIG_MBASE);
+    printf("CONFIG_MSIZE is %08x\n", CONFIG_MSIZE);
         return 0;
     }
 }
