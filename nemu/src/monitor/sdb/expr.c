@@ -109,13 +109,13 @@ static void init_tokens() {
         return;
     }
     tokens_capacity = INITIAL_CAPACITY;
-    tokens          = malloc(sizeof(Token) * tokens_capacity);
+    tokens          = (Token *)malloc(sizeof(Token) * tokens_capacity);
     Assert(tokens != NULL, "malloc failed");
 }
 
 static bool expand_malloc(word_t cur_size) {
     tokens_capacity *= 2; // Double the capacity
-    Token *new_tokens = realloc(tokens, sizeof(Token) * tokens_capacity);
+    Token *new_tokens = (Token*)realloc(tokens, sizeof(Token) * tokens_capacity);
     if (new_tokens == NULL) {
         // Handle memory allocation failure
         free(tokens);

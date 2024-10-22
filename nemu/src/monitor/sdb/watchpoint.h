@@ -15,7 +15,7 @@ typedef struct watchpoint {
 
     char expr[EXPR_LEN];
 
-    sword_t old_value;
+    word_t old_value;
 } WP;
 
 void init_wp_pool();
