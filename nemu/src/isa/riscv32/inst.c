@@ -13,6 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "common.h"
 #include "local-include/reg.h"
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
@@ -138,7 +139,7 @@ static int decode_exec(Decode *s) {
     INSTPAT("0000000 ????? ????? 111 ????? 011 0011", and, R, R(rd) = src1 & src2;);
     // mul operation
     INSTPAT("0000001 ????? ????? 000 ????? 011 0011", mul, R, R(rd) = src1 * src2;);
-    INSTPAT("0000001 ????? ????? 110 ????? 011 0011", rem, R, printf("%d\n", src1 % src2);R(rd) = src1 % src2; );
+    INSTPAT("0000001 ????? ????? 110 ????? 011 0011", rem, R, printf("%d\n", src1 % src2);R(rd) = (word_t)(src1 % src2); );
 
 
 
