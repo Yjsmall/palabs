@@ -65,6 +65,7 @@ enum {
         *imm = SEXT(((BITS(i, 31, 31) << 19) | BITS(i, 30, 21) | (BITS(i, 20, 20) << 10) | (BITS(i, 19, 12) << 11)) << 1, 21);                       \
     } while (0)
 
+// TODO:
 #define immB() do {                                                                                                                                             \
         *imm = SEXT(((BITS(i, 31, 31) << 11) | (BITS(i, 30, 25) << 4) | BITS(i, 11, 8)  | (BITS(i, 7, 7) << 10)) << 1, 13);                     \
 } while(0)
