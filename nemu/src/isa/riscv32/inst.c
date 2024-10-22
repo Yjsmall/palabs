@@ -60,10 +60,15 @@ enum {
         *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7);                                                                                     \
     } while (0)
 
-#define immJ()                                                                                                                                       \
-    do {                                                                                                                                             \
-        *imm = SEXT(((BITS(i, 31, 31) << 19) | BITS(i, 30, 21) | (BITS(i, 20, 20) << 10) | (BITS(i, 19, 12) << 11)) << 1, 21);                       \
-    } while (0)
+
+#define immJ() do { \
+	*imm = SEXT(( \
+            (BITS(i, 31, 31) << 19) | \
+            (BITS(i, 19, 12) << 11) | \
+            (BITS(i, 20, 20) << 10) | \
+            (BITS(i, 30, 21)) \
+            ) << 1, 21);  \
+} while(0)
 
 // TODO:
 
