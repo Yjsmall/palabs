@@ -66,9 +66,17 @@ enum {
     } while (0)
 
 // TODO:
-#define immB() do {                                                                                                                                             \
-        *imm = SEXT(((BITS(i, 31, 31) << 11) | (BITS(i, 30, 25) << 4) | BITS(i, 11, 8)  | (BITS(i, 7, 7) << 10)) << 1, 13);                     \
+
+
+#define immB() do { \
+	*imm = SEXT(( \
+            (BITS(i, 31, 31) << 11) | \
+            (BITS(i, 7, 7)   << 10) | \
+            (BITS(i, 30, 25) << 4) | \
+            (BITS(i, 11, 8)) \
+            ) << 1, 13);  \
 } while(0)
+
 
 #define debug_print(x1, x2, x3) printf("src1-%08x src2-%08x imm-%08x\n", x1, x2, x3)
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
