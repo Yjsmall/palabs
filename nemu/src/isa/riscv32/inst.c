@@ -116,6 +116,7 @@ static int decode_exec(Decode *s) {
     // TYPE_R: R-type instruction
     // logic operation
     INSTPAT("0000000 ????? ????? 000 ????? 011 0011", add, R, 
+    printf("add\n");
     debug_print(src1, src1, imm);
     R(rd) = src1 + src2;);
     INSTPAT("0000000 ????? ????? 011 ????? 011 0011", sltu, R, R(rd) = src1 < src2 ? 1 : 0;);
