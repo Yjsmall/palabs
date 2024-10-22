@@ -18,6 +18,7 @@
 #include <cpu/ifetch.h>
 #include <cpu/decode.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #define R(i) gpr(i)
 #define Mr   vaddr_read
@@ -137,7 +138,7 @@ static int decode_exec(Decode *s) {
     INSTPAT("0000000 ????? ????? 111 ????? 011 0011", and, R, R(rd) = src1 & src2;);
     // mul operation
     INSTPAT("0000001 ????? ????? 000 ????? 011 0011", mul, R, R(rd) = src1 * src2;);
-    INSTPAT("0000001 ????? ????? 110 ????? 011 0011", remw, R, R(rd) =src1 % src2;);
+    INSTPAT("0000001 ????? ????? 110 ????? 011 0011", rem, R, R(rd) = src1 % src2; printf("%d\n", src1 % src2););
 
 
 
