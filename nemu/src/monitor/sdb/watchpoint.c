@@ -93,7 +93,7 @@ void info_watchpoints() {
     }
     for (int i = 0; i < NR_WP; i++) {
         if (wp_pool[i].used) {
-            printf("Watchpoint %d: %s, value = %u\n", i, wp_pool[i].expr, wp_pool[i].old_value);
+            printf("Watchpoint %d: %s, value = %u\n", i, wp_pool[i].expr + 1, wp_pool[i].old_value);
         }
     }
 }
