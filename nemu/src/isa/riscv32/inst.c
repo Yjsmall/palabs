@@ -19,7 +19,6 @@
 #include <cpu/ifetch.h>
 #include <cpu/decode.h>
 #include <stdint.h>
-#include <stdio.h>
 
 #define R(i) gpr(i)
 #define Mr   vaddr_read
@@ -60,28 +59,15 @@ enum {
         *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7);                                                                                     \
     } while (0)
 
+#define immJ()                                                                                                                                       \
+    do {                                                                                                                                             \
+        *imm = SEXT(((BITS(i, 31, 31) << 19) | (BITS(i, 19, 12) << 11) | (BITS(i, 20, 20) << 10) | (BITS(i, 30, 21))) << 1, 21);                     \
+    } while (0)
 
-#define immJ() do { \
-	*imm = SEXT(( \
-            (BITS(i, 31, 31) << 19) | \
-            (BITS(i, 19, 12) << 11) | \
-            (BITS(i, 20, 20) << 10) | \
-            (BITS(i, 30, 21)) \
-            ) << 1, 21);  \
-} while(0)
-
-// TODO:
-
-
-#define immB() do { \
-	*imm = SEXT(( \
-            (BITS(i, 31, 31) << 11) | \
-            (BITS(i, 7, 7)   << 10) | \
-            (BITS(i, 30, 25) << 4) | \
-            (BITS(i, 11, 8)) \
-            ) << 1, 13);  \
-} while(0)
-
+#define immB()                                                                                                                                       \
+    do {                                                                                                                                             \
+        *imm = SEXT(((BITS(i, 31, 31) << 11) | (BITS(i, 7, 7) << 10) | (BITS(i, 30, 25) << 4) | (BITS(i, 11, 8))) << 1, 13);                         \
+    } while (0)
 
 #define debug_print(x1, x2, x3) printf("src1-%08x src2-%08x imm-%08x\n", x1, x2, x3)
 static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_t *imm, int type) {
@@ -111,7 +97,7 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
             immB();
             break;
         case TYPE_N: break;
-        default: panic("unsupported type = %d", type);
+        default:     panic("unsupported type = %d", type);
     }
 }
 
@@ -142,7 +128,6 @@ static int decode_exec(Decode *s) {
     INSTPAT("0100000 ????? ????? 101 ????? 01100 11", sra, R, R(rd) = (sword_t)src1 >> (sword_t)src2);
     INSTPAT("0000000 ????? ????? 010 ????? 01100 11", slt, R, R(rd) = ((sword_t)src1 < (sword_t)src2));
     INSTPAT("0000000 ????? ????? 011 ????? 01100 11", sltu, R, R(rd) = (src1 < src2));
-
 
     // TYPE_I: I-type instruction
     // ----------[imme]--------[rs1]-[3]-[rd]-[opcode]
@@ -183,20 +168,18 @@ static int decode_exec(Decode *s) {
     INSTPAT("??????? ????? ????? 000 ????? 1100111", jalr, I, s->dnpc = src1 + imm; R(rd) = s->pc + 4;);
 
     // TYPE_U: U-type instruction
-    INSTPAT("??????? ????? ????? ??? ????? 01101 11", lui    , U, R(rd) = imm);
+    INSTPAT("??????? ????? ????? ??? ????? 01101 11", lui, U, R(rd) = imm);
     INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc, U, R(rd) = s->pc + imm;);
 
-      /* RV32M Multiply Extension */
-  INSTPAT("0000001 ????? ????? 000 ????? 01100 11", mul    , R, R(rd) = src1 * src2);
-  INSTPAT("0000001 ????? ????? 001 ????? 01100 11", mulh   ,
-          R, R(rd) = BITS(((int64_t)(int32_t)src1 * (int32_t)src2), 63,32));
-  INSTPAT("0000001 ????? ????? 011 ????? 01100 11", mulhu  , 
-          R, R(rd) = BITS(((uint64_t)(uint32_t)src1 * (uint32_t)src2), 63,32));
-  // mulhsu
-  INSTPAT("0000001 ????? ????? 100 ????? 01100 11", div    , R, R(rd) = (sword_t)src1 / (sword_t)src2);
-  INSTPAT("0000001 ????? ????? 101 ????? 01100 11", divu   , R, R(rd) = src1 / src2);
-  INSTPAT("0000001 ????? ????? 110 ????? 01100 11", rem    , R, R(rd) = (sword_t)src1 % (sword_t)src2);
-  INSTPAT("0000001 ????? ????? 111 ????? 01100 11", remu   , R, R(rd) = src1 % src2);
+    /* RV32M Multiply Extension */
+    INSTPAT("0000001 ????? ????? 000 ????? 01100 11", mul, R, R(rd) = src1 * src2);
+    INSTPAT("0000001 ????? ????? 001 ????? 01100 11", mulh, R, R(rd) = BITS(((int64_t)(int32_t)src1 * (int32_t)src2), 63, 32));
+    INSTPAT("0000001 ????? ????? 011 ????? 01100 11", mulhu, R, R(rd) = BITS(((uint64_t)(uint32_t)src1 * (uint32_t)src2), 63, 32));
+    // mulhsu
+    INSTPAT("0000001 ????? ????? 100 ????? 01100 11", div, R, R(rd) = (sword_t)src1 / (sword_t)src2);
+    INSTPAT("0000001 ????? ????? 101 ????? 01100 11", divu, R, R(rd) = src1 / src2);
+    INSTPAT("0000001 ????? ????? 110 ????? 01100 11", rem, R, R(rd) = (sword_t)src1 % (sword_t)src2);
+    INSTPAT("0000001 ????? ????? 111 ????? 01100 11", remu, R, R(rd) = src1 % src2);
 
     // TYPE_N: No operand instruction
     INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak, N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0

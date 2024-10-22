@@ -81,7 +81,7 @@
 // NOTE1: `c` should be defined as a list like:
 //   f(a0) f(a1) f(a2) ...
 // NOTE2: each element in the container can be a tuple
-#define MAP(c, f) c(f)
+#define MAP(c, f)       c(f)
 
 #define BITMASK(bits)   ((1ull << (bits)) - 1)
 #define BITS(x, hi, lo) (((x) >> (lo)) & BITMASK((hi) - (lo) + 1)) // similar to x[hi:lo] in verilog
@@ -96,7 +96,7 @@
 #define ROUNDUP(a, sz)   ((((uintptr_t)a) + (sz) - 1) & ~((sz) - 1))
 #define ROUNDDOWN(a, sz) ((((uintptr_t)a)) & ~((sz) - 1))
 
-#define PG_ALIGN __attribute((aligned(4096)))
+#define PG_ALIGN         __attribute((aligned(4096)))
 
 #if !defined(likely)
 #define likely(cond)   __builtin_expect(cond, 1)
