@@ -39,18 +39,22 @@ enum {
     do {                                                                                                                                             \
         *src1 = R(rs1);                                                                                                                              \
     } while (0)
+
 #define src2R()                                                                                                                                      \
     do {                                                                                                                                             \
         *src2 = R(rs2);                                                                                                                              \
     } while (0)
+
 #define immI()                                                                                                                                       \
     do {                                                                                                                                             \
         *imm = SEXT(BITS(i, 31, 20), 12);                                                                                                            \
     } while (0)
+
 #define immU()                                                                                                                                       \
     do {                                                                                                                                             \
         *imm = SEXT(BITS(i, 31, 12), 20) << 12;                                                                                                      \
     } while (0)
+
 #define immS()                                                                                                                                       \
     do {                                                                                                                                             \
         *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7);                                                                                     \
@@ -63,7 +67,7 @@ enum {
 
 #define immB()                                                                                                                                       \
     do {                                                                                                                                             \
-        *imm = SEXT((BITS(i, 31, 31) << 19) | (BITS(i, 7, 7) << 11) | (BITS(i, 30, 25) << 5) | (BITS(i, 11, 8) << 1), 13);                           \
+        *imm = SEXT(((BITS(i, 31, 31) << 12) | (BITS(i, 30, 25) << 5) | (BITS(i, 11, 8) << 1) | (BITS(i, 7, 7) << 11)) << 1, 13);                    \
     } while (0)
 
 #define debug_print(x1, x2, x3) printf("src1-%08x src2-%08x imm-%08x\n", x1, x2, x3)
