@@ -9,12 +9,15 @@ void add_inst(char *inst) {
     if (size >= 16) {
         free(buffer[cur]);
         buffer[cur] = NULL; // Set to NULL after freeing
+        buffer[cur] = inst;
+        cur         = (cur + 1) % 16;
+    } else {
+        cur         = (cur + 1) % 16;
+        buffer[cur] = inst;
     }
-    cur         = (cur + 1) % 16;
-    buffer[cur] = inst;
-    if (size < 16) {
-        size++;
-    }
+        if (size < 16) {
+            size++;
+        }
 }
 
 void print_buffer() {
