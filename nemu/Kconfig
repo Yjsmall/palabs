@@ -199,6 +199,14 @@ source "src/device/Kconfig"
 endif
 
 
+config WATCHPOINT
+  depends on TARGET_NATIVE_ELF
+  bool "Enable watchpoint"
+  default n
+  help
+    Enable watchpoint with a reference design.
+    Note that this will significantly reduce the performance of NEMU.
+
 menu "Miscellaneous"
 choice
   depends on !TARGET_AM
