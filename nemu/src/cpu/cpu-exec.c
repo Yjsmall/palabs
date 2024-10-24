@@ -40,10 +40,10 @@ void device_update();
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
     if (ITRACE_COND) {
-        log_write("%s\n", _this->logbuf);
-        char *dest = malloc(strlen(_this->logbuf) + 1);
-        strcpy(dest, _this->logbuf);
-        add_inst(dest);
+        // log_write("%s\n", _this->logbuf);
+        // char *dest = malloc(strlen(_this->logbuf) + 1);
+        // strcpy(dest, _this->logbuf);
+        add_inst(_this->logbuf);
     }
 #endif
     if (g_print_step) {
