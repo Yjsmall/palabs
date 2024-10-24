@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 char * buffer[16];
 int cur = -1;
 
@@ -15,7 +16,7 @@ void print_buffer() {
 
 void destory_buffer() {
     for (int i = 0; i < 16; i++) {
-        buffer[i] = NULL;
+      free(buffer[i]);
     }
     cur = -1;
 }
