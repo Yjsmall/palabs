@@ -56,17 +56,12 @@ static int cmd_q(char *args) {
 }
 
 static int cmd_si(char *args) {
-    if (args == NULL) {
-        cpu_exec(1);
+    int step = 1;
+    if (args) {
+        sscanf(args, "%d", &step);
     }
-
-    char  *endptr;
-    word_t n = (word_t)strtol(args, &endptr, 10);
-
-    if (*endptr == '\0') {
-        cpu_exec(n);
-    }
-    return -1;
+    cpu_exec((uint64_t)step);
+    return 0;
 }
 
 static int cmd_info(char *args) {
