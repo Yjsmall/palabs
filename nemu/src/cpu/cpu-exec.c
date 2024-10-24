@@ -19,6 +19,8 @@
 #include <cpu/tracebuffer.h>
 #include <locale.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "../monitor/sdb/watchpoint.h"
 
 /* The assembly code of instructions executed is only output to the screen
@@ -39,7 +41,9 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
     if (ITRACE_COND) {
         log_write("%s\n", _this->logbuf);
-        add_inst(_this->logbuf);
+        char *dest = malloc(strlen(_this->logbuf) + 1);
+        strcpy(dest, _this->logbuf);
+        add_inst(dest);
     }
 #endif
     if (g_print_step) {
