@@ -112,7 +112,6 @@ static int cmd_w(char *args) {
     wp->old_value = expr(wp->expr, &success);
     if (!success) {
         printf("The expr of watch is error\n");
-        return -1;
     }
     return 0;
 }
