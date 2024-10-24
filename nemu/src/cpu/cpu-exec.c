@@ -39,6 +39,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
     if (ITRACE_COND) {
         log_write("%s\n", _this->logbuf);
+        add_inst(_this->logbuf);
     }
 #endif
     if (g_print_step) {
@@ -122,6 +123,7 @@ void cpu_exec(uint64_t n) {
     uint64_t timer_start = get_time();
 
     execute(n);
+    print_buffer();
 
     uint64_t timer_end = get_time();
     g_timer += timer_end - timer_start;
