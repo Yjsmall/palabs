@@ -2,10 +2,15 @@
 #include <stdlib.h>
 char * buffer[16];
 int cur = -1;
+int size = 0;
 
 void add_inst(char *inst) {
+  if (size >= 16) {
+    free(buffer[cur]);
+  }
     cur = (cur + 1) % 16;
     buffer[cur] = inst;
+    size++;
 }
 
 void print_buffer() {
