@@ -76,7 +76,7 @@ void check_watchpoints() {
 
             if (new_value != wp_pool[i].old_value) {
                 nemu_state.state = NEMU_STOP;
-                printf("Watchpoint %d: %s\n", i, wp_pool[i].expr);
+                printf("Watchpoint %d: %s\n", i, wp_pool[i].expr+1);
                 printf("Old value = %u\n", wp_pool[i].old_value);
                 printf("New value = %u\n", new_value);
                 wp_pool[i].old_value = new_value;

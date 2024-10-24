@@ -76,7 +76,7 @@ static int cmd_info(char *args) {
 }
 
 static int cmd_x(char *args) {
-    word_t    bytes;
+    word_t bytes;
     word_t start;
     int    result = sscanf(args, "%d %x", &bytes, &start);
     if (result == 2) {
