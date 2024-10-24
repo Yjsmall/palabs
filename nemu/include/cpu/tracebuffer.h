@@ -12,3 +12,10 @@ void print_buffer() {
         printf("%s\n", buffer[i]);
     }
 }
+
+void destory_buffer() {
+    for (int i = 0; i < 16; i++) {
+        buffer[i] = NULL;
+    }
+    cur = -1;
+}
