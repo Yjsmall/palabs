@@ -15,12 +15,14 @@ void add_inst(char *inst) {
         cur         = (cur + 1) % 16;
         buffer[cur] = inst;
     }
-        if (size < 16) {
-            size++;
-        }
+
+    if (size < 16) {
+        size++;
+    }
 }
 
 void print_buffer() {
+    printf("instructions \n");
     for (int i = 0; i < 16; i++) {
         if (buffer[i] != NULL) {
             printf("%s\n", buffer[i]);
