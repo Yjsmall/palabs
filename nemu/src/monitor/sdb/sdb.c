@@ -106,13 +106,13 @@ static int cmd_p(char *args) {
 }
 
 static int cmd_w(char *args) {
-    bool success  = false;
-    word_t val = expr(args, &success);
+    bool   success = false;
+    word_t val     = expr(args, &success);
     if (!success) {
         printf("The expr of watch is error\n");
         return 0;
     }
-    WP *wp = new_wp();
+    WP *wp        = new_wp();
     wp->old_value = val;
     strcpy(wp->expr, args);
     return 0;
