@@ -22,6 +22,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../monitor/sdb/watchpoint.h"
+#include "debug.h"
+#include "utils.h"
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -41,11 +43,14 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
     if (ITRACE_COND) {
         log_write("%s\n", _this->logbuf);
-        char *dest = malloc(strlen(_this->logbuf) + 1);
-        if (dest != NULL) {
+        char *dest = malloc(strlen(_this->logbuf) + 4);
+        Assert(dest == NULL, "failed\n");
+        if (nemu_state.state != NEMU_RUNNING) {
+            strcpy(dest, "-->");
+            strcpy(dest + 3, _this->logbuf);
+        }
         strcpy(dest, _this->logbuf);
         add_inst(dest);
-        }
     }
 #endif
     if (g_print_step) {
@@ -122,8 +127,8 @@ void cpu_exec(uint64_t n) {
     switch (nemu_state.state) {
         case NEMU_END:
         case NEMU_ABORT:
-        case NEMU_QUIT: printf("Program execution has ended. To restart the program, exit NEMU and run again.\n"); return;
-        default: nemu_state.state = NEMU_RUNNING;
+        case NEMU_QUIT:  printf("Program execution has ended. To restart the program, exit NEMU and run again.\n"); return;
+        default:         nemu_state.state = NEMU_RUNNING;
     }
 
     uint64_t timer_start = get_time();
