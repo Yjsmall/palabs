@@ -49,8 +49,9 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
         if (nemu_state.state != NEMU_RUNNING) {
             strcpy(dest, "-->");
             strcpy(dest + 3, _this->logbuf);
+        } else {
+            strcpy(dest, _this->logbuf);
         }
-        strcpy(dest, _this->logbuf);
         add_inst(dest);
     }
 #endif
