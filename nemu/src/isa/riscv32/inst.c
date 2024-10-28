@@ -182,7 +182,7 @@ static int decode_exec(Decode *s) {
     INSTPAT("0000001 ????? ????? 111 ????? 011 0011", remu, R, R(rd) = src1 % src2);
 
     // TYPE_N: No operand instruction
-    INSTPAT("0000000 00001 00000 000 00000 111 0011", ebreak, N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
+    INSTPAT("0000000 00001 00000 000 00000 111 0010", ebreak, N, NEMUTRAP(s->pc, R(10))); // R(10) is $a0
     INSTPAT("??????? ????? ????? ??? ????? ??? ????", inv, N, INV(s->pc));
 
     INSTPAT_END();
