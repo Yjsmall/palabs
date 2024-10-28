@@ -46,6 +46,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
         char *dest = malloc(strlen(_this->logbuf) + 5);
 
         Assert(dest != NULL, "malloc failed\n");
+        strcpy(dest, "    ");
         if (nemu_state.state != NEMU_RUNNING) {
             strcpy(dest, "--> ");
         }
