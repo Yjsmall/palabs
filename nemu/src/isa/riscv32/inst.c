@@ -164,8 +164,28 @@ static int decode_exec(Decode *s) {
     INSTPAT("??????? ????? ????? 111 ????? 110 0011", bgeu, B, if (src1 >= src2) s->dnpc = s->pc + imm);
 
     // TYPE_J: J-type instruction
-    INSTPAT("??????? ????? ????? ??? ????? 110 1111", jal, J, R(rd) = s->pc + 4; s->dnpc = s->pc + imm;);
-    INSTPAT("??????? ????? ????? 000 ????? 110 0111", jalr, I, s->dnpc = src1 + imm; R(rd) = s->pc + 4;);
+    INSTPAT("??????? ????? ????? ??? ????? 110 1111", jal, J, R(rd) = s->pc + 4; s->dnpc = s->pc + imm;
+            IFDEF(CONFIG_FTRACE, {
+                // jal label: jal ra offest
+                // jump label, store the function return address in ra
+                if (rd == 1) {
+                    ftrace_func_call(s->pc, s->dnpc, false);
+                }
+            }) R(rd) = s->pc + 4);
+
+    INSTPAT("??????? ????? ????? 000 ????? 11001 11", jalr, I, volatile word_t t = s->pc + 4; s->dnpc = (src1 + imm) & ~(word_t)1;
+            IFDEF(CONFIG_FTRACE,
+                  {
+                      // note the order of if and else if.
+                      if (s->isa.inst == 0x00008067) {
+                          ftrace_func_ret(s->pc); // ret: jalr x0, 0(ra)
+                      } else if (rd == 1) {
+                          ftrace_func_call(s->pc, s->dnpc, false); // normal call
+                      } else if (rd == 0 && imm == 0) {
+                          ftrace_func_call(s->pc, s->dnpc, true); // jr rs
+                      }
+                  });
+            R(rd) = t);
 
     // TYPE_U: U-type instruction
     INSTPAT("??????? ????? ????? ??? ????? 011 0111", lui, U, R(rd) = imm);
