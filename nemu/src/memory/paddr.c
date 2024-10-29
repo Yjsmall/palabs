@@ -13,6 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+#include "macro.h"
 #include <memory/host.h>
 #include <memory/paddr.h>
 #include <device/mmio.h>
@@ -48,6 +49,7 @@ void init_mem() {
 }
 
 word_t paddr_read(paddr_t addr, int len) {
+    IFDEF(CONFIG_MTRACE, display_pread(addr, len));
     if (likely(in_pmem(addr)))
         return pmem_read(addr, len);
     IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
@@ -56,6 +58,7 @@ word_t paddr_read(paddr_t addr, int len) {
 }
 
 void paddr_write(paddr_t addr, int len, word_t data) {
+    IFDEF(CONFIG_MTRACE, display_pwrite(addr, len, data));
     if (likely(in_pmem(addr))) {
         pmem_write(addr, len, data);
         return;
